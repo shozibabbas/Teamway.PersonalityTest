@@ -1,0 +1,11 @@
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.logo {
+    width: 10rem;
+}
+
+.progress {
+    height: 1.5rem;
+}
