@@ -1,31 +1,66 @@
-import React, {useState} from 'react';
-import {Badge, ListGroup, ProgressBar} from 'react-bootstrap';
+import React, {useEffect, useState} from 'react';
+import {Alert, Badge, ListGroup, ProgressBar, Spinner} from 'react-bootstrap';
 import {solid} from '@fortawesome/fontawesome-svg-core/import.macro';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {selectQuestion, selectQuizStats} from '../redux/Quiz.slice';
-import {useSelector} from 'react-redux';
-import {useSubmitAnswerMutation} from '../redux/Quiz.api';
+import {useGetQuizDetailQuery, useSubmitAnswerMutation} from '../redux/Quiz.api';
 import CustomButton from '../common/CustomButton';
+import {useNavigate, useParams} from 'react-router-dom';
 
 QASection.propTypes = {};
 
 function QASection() {
-	const question = useSelector(selectQuestion);
-	const stats = useSelector(selectQuizStats);
-	const [selectedAnswer, setSelectedAnswer] = useState(null);
-
+	const {sessionId} = useParams();
+	const navigate = useNavigate();
+	const {data: quizDetail, isLoading: quizDetailIsLoading, error} = useGetQuizDetailQuery({sessionId});
 	const [submitAnswer, {isLoading}] = useSubmitAnswerMutation();
+	const [selectedAnswer, setSelectedAnswer] = useState(null);
+	const [question, setQuestion] = useState(null);
+	const [stats, setStats] = useState({});
 
 	const onSubmitAnswer = () => {
-		submitAnswer({answerId: selectedAnswer.id})
+		submitAnswer({sessionId, answerId: selectedAnswer.id, questionId: question.id})
 			.unwrap()
-			.then(() => {
+			.then((res) => {
 				setSelectedAnswer(null);
+				if (res.isCompleted) {
+					navigate('/result/' + sessionId);
+				}
 			})
 			.catch(e => {
 				alert(e);
 			});
 	};
+
+	useEffect(() => {
+		if (!quizDetail || error) {
+			return;
+		}
+		const currentQuestion = quizDetail.questions.find(x => x.id === quizDetail.currentQuestionId);
+		const currentAnswer = currentQuestion.answers.find(x => x.id === quizDetail.userAnswers[currentQuestion.id]);
+		setQuestion(currentQuestion);
+		setSelectedAnswer(currentAnswer);
+		setStats({
+			totalQuestions: quizDetail.questions.length,
+			completedQuestions: quizDetail.questions.findIndex(x => x.id === quizDetail.currentQuestionId) + 1
+		});
+	}, [quizDetail]);
+
+	if (quizDetailIsLoading) {
+		return (
+			<div className="w-75 d-flex flex-column align-items-center">
+				<Spinner animation={'border'}/>
+			</div>
+		);
+	}
+	if (!question || error) {
+		return (
+			<div className="w-75 d-flex flex-column">
+				<Alert variant={'danger'}>
+					{JSON.stringify(error)}
+				</Alert>
+			</div>
+		);
+	}
 	return (
 		<div className="w-75 d-flex flex-column">
 			<div className="flex-grow-1 d-flex flex-column justify-content-evenly">

@@ -1,5 +1,4 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {quizApi} from './Quiz.api';
 
 const sliceName = 'quiz';
 const initialState = {
@@ -19,23 +18,33 @@ export const QuizSlice = createSlice({
 			}
 		},
 	},
-	extraReducers(builder) {
-		builder.addMatcher(quizApi.endpoints.startQuiz.matchFulfilled, (state, action) => {
-			const {sessionId, currentQuestionId, questions} = action.payload;
-			state.sessionId = sessionId;
-			state.questions = questions;
-			let currentQuestionIndex = questions.map(object => object.id).indexOf(currentQuestionId);
-			if (currentQuestionIndex < 0) {
-				currentQuestionIndex = 0;
-			}
-			state.questionIndex = currentQuestionIndex;
-		});
-		builder.addMatcher(quizApi.endpoints.submitAnswer.matchFulfilled, (state) => {
-			if (state.questionIndex + 1 < state.questions.length) {
-				state.questionIndex++;
-			}
-		});
-	}
+	// extraReducers(builder) {
+	// 	builder.addMatcher(quizApi.endpoints.startQuiz.matchFulfilled, (state, action) => {
+	// 		const {sessionId, currentQuestionId, questions} = action.payload;
+	// 		state.sessionId = sessionId;
+	// 		state.questions = questions;
+	// 		let currentQuestionIndex = questions.map(object => object.id).indexOf(currentQuestionId);
+	// 		if (currentQuestionIndex < 0) {
+	// 			currentQuestionIndex = 0;
+	// 		}
+	// 		state.questionIndex = currentQuestionIndex;
+	// 	});
+	// 	builder.addMatcher(quizApi.endpoints.getQuizDetail.matchFulfilled, (state, action) => {
+	// 		const {sessionId, currentQuestionId, questions} = action.payload;
+	// 		state.sessionId = sessionId;
+	// 		state.questions = questions;
+	// 		let currentQuestionIndex = questions.map(object => object.id).indexOf(currentQuestionId);
+	// 		if (currentQuestionIndex < 0) {
+	// 			currentQuestionIndex = 0;
+	// 		}
+	// 		state.questionIndex = currentQuestionIndex;
+	// 	});
+	// 	builder.addMatcher(quizApi.endpoints.submitAnswer.matchFulfilled, (state) => {
+	// 		if (state.questionIndex + 1 < state.questions.length) {
+	// 			state.questionIndex++;
+	// 		}
+	// 	});
+	// }
 });
 
 export const {
@@ -47,3 +56,4 @@ export const selectQuizStats = state => ({
 	totalQuestions: state[sliceName].questions.length,
 	completedQuestions: state[sliceName].questionIndex + 1
 });
+export const selectHasQuestions = state => state[sliceName].questions.length > 0;

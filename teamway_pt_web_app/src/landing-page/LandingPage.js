@@ -15,7 +15,7 @@ function LandingPage() {
 		startQuiz()
 			.unwrap()
 			.then(res => {
-				navigate('quiz/' + res.sessionId);
+				navigate(`quiz/${res.sessionId}/${res.currentQuestionId}`);
 			})
 			.catch(e => {
 				alert(JSON.stringify(e));
