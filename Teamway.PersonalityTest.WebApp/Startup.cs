@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Teamway.PersonalityTest.WebApp.Core;
+using Teamway.PersonalityTest.WebApp.Errors;
 using Teamway.PersonalityTest.WebApp.Models;
 
 namespace Teamway.PersonalityTest.WebApp
@@ -28,6 +30,7 @@ namespace Teamway.PersonalityTest.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddControllers();
             services.AddMemoryCache();
             services.AddOptions();
@@ -39,16 +42,21 @@ namespace Teamway.PersonalityTest.WebApp
                     var enumConverter = new JsonStringEnumConverter();
                     opts.JsonSerializerOptions.Converters.Add(enumConverter);
                 });
+            services.AddSingleton<IPersonalityTestLogic, PersonalityTestLogic>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMemoryCache cache)
         {
             DataSeeder.Seed(cache);
-            app.UseCors(x =>
-            {
-                x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-            });
+
+            app.UseCors(x => x
+                .SetIsOriginAllowed(origin => true)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -59,6 +67,8 @@ namespace Teamway.PersonalityTest.WebApp
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

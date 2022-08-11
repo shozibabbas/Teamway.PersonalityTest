@@ -5,7 +5,8 @@ import {useGetQuizResultQuery} from '../redux/Quiz.api';
 import {useNavigate, useParams} from 'react-router-dom';
 import IntrovertResult from './IntrovertResult';
 import ExtrovertResult from './ExtrovertResult';
-import {Alert, Button, Spinner} from 'react-bootstrap';
+import {Button, Spinner} from 'react-bootstrap';
+import ErrorAlertBox from '../common/ErrorAlertBox';
 
 ResultPage.propTypes = {};
 
@@ -37,9 +38,7 @@ function ResultPage() {
 	if (!result || error) {
 		return (
 			<div className="flex-fill container-fluid d-flex flex-column justify-content-center align-items-center">
-				<Alert variant={'danger'}>
-					{JSON.stringify(error)}
-				</Alert>
+				<ErrorAlertBox {...error} />
 			</div>
 		);
 	}

@@ -11,6 +11,7 @@
     <None Remove="Models\Requests\" />
     <None Remove="Models\Response\" />
     <None Remove="Core\" />
+    <None Remove="Errors\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.27" />
@@ -20,5 +21,6 @@
     <Folder Include="Models\Request\" />
     <Folder Include="Models\Response\" />
     <Folder Include="Core\" />
+    <Folder Include="Errors\" />
   </ItemGroup>
 </Project>

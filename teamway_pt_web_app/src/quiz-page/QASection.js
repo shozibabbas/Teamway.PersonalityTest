@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Badge, ListGroup, ProgressBar, Spinner} from 'react-bootstrap';
+import {Badge, ListGroup, ProgressBar, Spinner} from 'react-bootstrap';
 import {solid} from '@fortawesome/fontawesome-svg-core/import.macro';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {useGetQuizDetailQuery, useSubmitAnswerMutation} from '../redux/Quiz.api';
 import CustomButton from '../common/CustomButton';
 import {useNavigate, useParams} from 'react-router-dom';
+import ErrorAlertBox from '../common/ErrorAlertBox';
 
 QASection.propTypes = {};
 
@@ -55,9 +56,7 @@ function QASection() {
 	if (!question || error) {
 		return (
 			<div className="w-75 d-flex flex-column">
-				<Alert variant={'danger'}>
-					{JSON.stringify(error)}
-				</Alert>
+				<ErrorAlertBox {...error} />
 			</div>
 		);
 	}
