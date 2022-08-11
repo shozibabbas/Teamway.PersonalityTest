@@ -1,40 +1,54 @@
-import React from 'react';
-import {ProgressBar} from 'react-bootstrap';
+import React, {useState} from 'react';
+import {Badge, ListGroup, ProgressBar} from 'react-bootstrap';
 import {solid} from '@fortawesome/fontawesome-svg-core/import.macro';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {selectQuestion, selectQuizStats} from '../redux/Quiz.slice';
+import {useSelector} from 'react-redux';
+import {useSubmitAnswerMutation} from '../redux/Quiz.api';
+import CustomButton from '../common/CustomButton';
 
 QASection.propTypes = {};
 
 function QASection() {
+	const question = useSelector(selectQuestion);
+	const stats = useSelector(selectQuizStats);
+	const [selectedAnswer, setSelectedAnswer] = useState(null);
+
+	const [submitAnswer, {isLoading}] = useSubmitAnswerMutation();
+
+	const onSubmitAnswer = () => {
+		submitAnswer({answerId: selectedAnswer.id})
+			.unwrap()
+			.then(() => {
+				setSelectedAnswer(null);
+			})
+			.catch(e => {
+				alert(e);
+			});
+	};
 	return (
 		<div className="w-75 d-flex flex-column">
 			<div className="flex-grow-1 d-flex flex-column justify-content-evenly">
-				<ProgressBar now={20} label={'1 / 5'} variant={'secondary'}/>
-				<h2 className="display-5">You’re really busy at work and a colleague is telling you their life story
-                    and personal woes. You:</h2>
+				<ProgressBar now={stats.completedQuestions / stats.totalQuestions * 100}
+					label={`${stats.completedQuestions} / ${stats.totalQuestions}`} variant={'secondary'}/>
+				<h2 className="display-5">{question.title}</h2>
 			</div>
 			<div className="flex-grow-1">
-				<div className="list-group list-group-flush">
-					<button className="list-group-item list-group-item-action p-3" aria-current="true">
-						<span className="badge bg-light text-dark me-3">1</span>
-                        Don’t dare to interrupt them
-					</button>
-					<button className="list-group-item list-group-item-action p-3" aria-current="true">
-						<span className="badge bg-light text-dark me-3">2</span>
-                        Think it’s more important to give them some of your time; work can wait
-					</button>
-					<button className="list-group-item list-group-item-action p-3 active" aria-current="true">
-						<span className="badge bg-light text-dark me-3">3</span>
-                        Listen, but with only with half an ear
-					</button>
-					<button className="list-group-item list-group-item-action p-3" aria-current="true">
-						<span className="badge bg-light text-dark me-3">4</span>
-                        Interrupt and explain that you are really busy at the moment
-					</button>
-				</div>
+				<ListGroup variant={'flush'}>
+					{question.answers.map((answer, index) => (
+						<ListGroup.Item key={answer.id} action className={'p-3'}
+							onClick={() => setSelectedAnswer(answer)}
+							active={selectedAnswer?.id === answer.id}>
+							<Badge bg={'light'} text={'dark'} className=" me-3">{index + 1}</Badge>
+							{answer.title}
+						</ListGroup.Item>
+					))}
+				</ListGroup>
 				<div className="mt-4 d-flex flex-column justify-content-ends align-items-end">
-					<button className="btn btn-outline-primary">Submit answer <FontAwesomeIcon
-						icon={solid('arrow-right')}/></button>
+					<CustomButton variant={'outline-primary'} disabled={!selectedAnswer} isLoading={isLoading}
+						onClick={() => onSubmitAnswer()}>Submit
+                        answer <FontAwesomeIcon
+							icon={solid('arrow-right')}/></CustomButton>
 				</div>
 			</div>
 		</div>
