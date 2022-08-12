@@ -7,6 +7,7 @@ namespace Teamway.PersonalityTest.WebApp.Core
     {
         public QuizSessionDetail StartQuiz();
         public QuizSessionDetail GetQuizDetail(string quizSessionId);
+        public QuizSessionDetail GoToPreviousQuestion(string quizSessionId);
         public QuizSessionDetail SubmitAnswer(string quizSessionId, string questionId, string answerId);
         public PersonalityType GetPersonalityType(string quizSessionId);
 

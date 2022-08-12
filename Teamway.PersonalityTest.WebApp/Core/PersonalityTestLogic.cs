@@ -60,6 +60,19 @@ namespace Teamway.PersonalityTest.WebApp.Core
             return quizSessionDetail;
         }
 
+        public QuizSessionDetail GoToPreviousQuestion(string quizSessionId)
+        {
+            _cache.TryGetValue(quizSessionId, out QuizSessionDetail quizSessionDetail);
+            if (quizSessionDetail == null)
+            {
+                throw new InvalidOperationException(ErrorMessages.RECORD_NOT_FOUND);
+            }
+            int newQuestionIndex = quizSessionDetail.Questions.IndexOf(quizSessionDetail.Questions.First(x => x.Id == quizSessionDetail.CurrentQuestionId)) - 1;
+            quizSessionDetail.CurrentQuestionId = quizSessionDetail.Questions[newQuestionIndex].Id;
+            _cache.Set(quizSessionId, quizSessionDetail);
+            return quizSessionDetail;
+        }
+
         public QuizSessionDetail SubmitAnswer(string quizSessionId, string questionId, string answerId)
         {
             _cache.TryGetValue(quizSessionId, out QuizSessionDetail quizSessionDetail);

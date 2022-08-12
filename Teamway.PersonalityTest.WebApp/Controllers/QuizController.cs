@@ -45,6 +45,13 @@ namespace Teamway.PersonalityTest.WebApp.Controllers
             return Ok(quizDetailResponse);
         }
 
+        [HttpPut("quiz_detail/{quizSessionId}/previous")]
+        public ActionResult GoToPreviousQuestion(string quizSessionId)
+        {
+            QuizSessionDetail quizSessionDetail = _personalityTestLogic.GoToPreviousQuestion(quizSessionId);
+            return Ok(quizSessionDetail);
+        }
+
         [HttpPut("quiz_detail/{quizSessionId}")]
         public ActionResult SubmitAnswer(string quizSessionId, [FromBody] SubmitAnswerRequest request)
         {
