@@ -23,7 +23,7 @@ namespace Teamway.PersonalityTest.WebApp.Core
         {
             IList<Question> questions = _cache.Get<IList<Question>>("questions");
             var rnd = new Random();
-            questions = questions.OrderBy(x => rnd.Next()).Take(5).ToList();
+            questions = questions.OrderBy(x => rnd.Next()).Take(_options.Value.MaxQuestionsInQuiz).ToList();
             Guid quizSessionId = Guid.NewGuid();
             QuizSessionDetail quizSession = new QuizSessionDetail()
             {

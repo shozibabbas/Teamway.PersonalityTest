@@ -20,14 +20,8 @@ namespace Teamway.PersonalityTest.WebApp
                         new Answer()
                         {
                             Id = Guid.NewGuid().ToString(),
-                            Title = "Don’t dare to interrupt them",
-                            Score = 10
-                        },
-                        new Answer()
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Title = "Think it’s more important to give them some of your time; work can wait",
-                            Score = 7.5
+                            Title = "Interrupt and explain that you are really busy at the moment",
+                            Score = 2.5
                         },
                         new Answer()
                         {
@@ -38,9 +32,18 @@ namespace Teamway.PersonalityTest.WebApp
                         new Answer()
                         {
                             Id = Guid.NewGuid().ToString(),
-                            Title = "Interrupt and explain that you are really busy at the moment",
-                            Score = 2.5
-                        }
+                            Title = "Think it’s more important to give them some of your time; work can wait",
+                            Score = 7.5
+                        },
+                        new Answer()
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Title = "Don’t dare to interrupt them",
+                            Score = 10
+                        },
+
+
+
                     }
                 },
                 new Question()
