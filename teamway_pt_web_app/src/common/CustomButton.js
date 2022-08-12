@@ -5,12 +5,13 @@ import {Button, Spinner} from 'react-bootstrap';
 CustomButton.propTypes = {
 	children: PropTypes.any,
 	isLoading: PropTypes.bool,
-	loadingText: PropTypes.string
+	loadingText: PropTypes.string,
+	disabled: PropTypes.bool
 };
 
-function CustomButton({children, isLoading, loadingText, ...buttonProps}) {
+function CustomButton({children, isLoading, loadingText, disabled, ...buttonProps}) {
 	return (
-		<Button {...buttonProps} disabled={isLoading}>
+		<Button {...buttonProps} disabled={isLoading || disabled}>
 			{isLoading ? (
 				<>
 					<Spinner

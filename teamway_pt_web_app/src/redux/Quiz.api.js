@@ -21,6 +21,10 @@ export const quizApi = createApi({
 			query: ({sessionId, ...body}) => ({url: '/quiz_detail/' + sessionId, method: 'put', body}),
 			invalidatesTags: ['Quiz']
 		}),
+		goToPreviousQuestion: builder.mutation({
+			query: ({sessionId, ...body}) => ({url: `/quiz_detail/${sessionId}/previous`, method: 'put', body}),
+			invalidatesTags: ['Quiz']
+		}),
 		getQuizResult: builder.query({
 			query: ({sessionId}) => ({url: '/result/' + sessionId, method: 'get'}),
 			providesTags: ['Quiz']
@@ -34,5 +38,6 @@ export const {
 	useStartQuizMutation,
 	useGetQuizDetailQuery,
 	useSubmitAnswerMutation,
-	useGetQuizResultQuery
+	useGetQuizResultQuery,
+	useGoToPreviousQuestionMutation
 } = quizApi;

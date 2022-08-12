@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Badge, ListGroup, ProgressBar, Spinner} from 'react-bootstrap';
 import {solid} from '@fortawesome/fontawesome-svg-core/import.macro';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {useGetQuizDetailQuery, useSubmitAnswerMutation} from '../redux/Quiz.api';
+import {useGetQuizDetailQuery, useGoToPreviousQuestionMutation, useSubmitAnswerMutation} from '../redux/Quiz.api';
 import CustomButton from '../common/CustomButton';
 import {useNavigate, useParams} from 'react-router-dom';
 import ErrorAlertBox from '../common/ErrorAlertBox';
@@ -13,6 +13,7 @@ function QASection() {
 	const {sessionId} = useParams();
 	const navigate = useNavigate();
 	const {data: quizDetail, isLoading: quizDetailIsLoading, error} = useGetQuizDetailQuery({sessionId});
+	const [goToPreviousQuestion, {isLoading: previousQuestionIsLoading}] = useGoToPreviousQuestionMutation();
 	const [submitAnswer, {isLoading}] = useSubmitAnswerMutation();
 	const [selectedAnswer, setSelectedAnswer] = useState(null);
 	const [question, setQuestion] = useState(null);
@@ -23,12 +24,23 @@ function QASection() {
 			.unwrap()
 			.then((res) => {
 				setSelectedAnswer(null);
-				if (res.isCompleted) {
+				if (stats.completedQuestions >= stats.totalQuestions && res.isCompleted) {
 					navigate('/result/' + sessionId);
+				} else {
+					navigate(`/quiz/${sessionId}/${res.currentQuestionId}`);
 				}
 			})
 			.catch(e => {
 				alert(e);
+			});
+	};
+
+	const onGoToPreviousQuestion = () => {
+		goToPreviousQuestion({sessionId})
+			.unwrap()
+			.then(res => {
+				setSelectedAnswer(null);
+				navigate(`/quiz/${sessionId}/${res.currentQuestionId}`);
 			});
 	};
 
@@ -46,7 +58,7 @@ function QASection() {
 		});
 	}, [quizDetail]);
 
-	if (quizDetailIsLoading) {
+	if (quizDetailIsLoading || previousQuestionIsLoading) {
 		return (
 			<div className="w-75 d-flex flex-column align-items-center">
 				<Spinner animation={'border'}/>
@@ -78,11 +90,18 @@ function QASection() {
 						</ListGroup.Item>
 					))}
 				</ListGroup>
-				<div className="mt-4 d-flex flex-column justify-content-ends align-items-end">
+				<div className="mt-4 d-flex flex-row justify-content-between align-items-end">
+					<CustomButton variant={'outline-primary'} disabled={stats.completedQuestions < 2}
+						isLoading={isLoading || previousQuestionIsLoading}
+						onClick={onGoToPreviousQuestion}>
+						<FontAwesomeIcon icon={solid('arrow-left')} className={'me-2'}/>
+                        Go to Previous Question
+					</CustomButton>
 					<CustomButton variant={'outline-primary'} disabled={!selectedAnswer} isLoading={isLoading}
-						onClick={() => onSubmitAnswer()}>Submit
-                        answer <FontAwesomeIcon
-							icon={solid('arrow-right')}/></CustomButton>
+						onClick={() => onSubmitAnswer()}>
+                        Submit answer
+						<FontAwesomeIcon icon={solid('arrow-right')} className={'ms-2'}/>
+					</CustomButton>
 				</div>
 			</div>
 		</div>
