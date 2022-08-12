@@ -16,16 +16,18 @@ namespace Teamway.PersonalityTest.WebApp.Controllers
     public class QuizController : Controller
     {
         private IMemoryCache _cache;
-        private IOptions<PersonalityConfiguration> _options;
         private IPersonalityTestLogic _personalityTestLogic;
 
-        public QuizController(IMemoryCache cache, IOptions<PersonalityConfiguration> options, IPersonalityTestLogic personalityTestLogic)
+        public QuizController(IMemoryCache cache, IPersonalityTestLogic personalityTestLogic)
         {
             _cache = cache;
-            _options = options;
             _personalityTestLogic = personalityTestLogic;
         }
 
+        /// <summary>
+        /// Start quiz from scratch
+        /// </summary>
+        /// <returns>Instance of the quiz from cache</returns>
         [HttpPost("start_quiz")]
         public ActionResult StartQuiz()
         {
@@ -38,6 +40,11 @@ namespace Teamway.PersonalityTest.WebApp.Controllers
             return Ok(startQuizResponse);
         }
 
+        /// <summary>
+        /// Get details of existing quiz
+        /// </summary>
+        /// <param name="quizSessionId">unique ID of quiz</param>
+        /// <returns>Instance of the quiz from cache</returns>
         [HttpGet("quiz_detail/{quizSessionId}")]
         public ActionResult GetQuizDetail(string quizSessionId)
         {
@@ -45,6 +52,11 @@ namespace Teamway.PersonalityTest.WebApp.Controllers
             return Ok(quizDetailResponse);
         }
 
+        /// <summary>
+        /// Move quiz to previous question
+        /// </summary>
+        /// <param name="quizSessionId">unique ID of quiz</param>
+        /// <returns>Instance of the quiz from cache</returns>
         [HttpPut("quiz_detail/{quizSessionId}/previous")]
         public ActionResult GoToPreviousQuestion(string quizSessionId)
         {
@@ -52,6 +64,11 @@ namespace Teamway.PersonalityTest.WebApp.Controllers
             return Ok(quizSessionDetail);
         }
 
+        /// <summary>
+        /// Submit answer for a question in quiz
+        /// </summary>
+        /// <param name="quizSessionId">unique ID of quiz</param>
+        /// <returns>Instance of the quiz from cache</returns>
         [HttpPut("quiz_detail/{quizSessionId}")]
         public ActionResult SubmitAnswer(string quizSessionId, [FromBody] SubmitAnswerRequest request)
         {
@@ -59,6 +76,11 @@ namespace Teamway.PersonalityTest.WebApp.Controllers
             return Ok(quizSessionDetail);
         }
 
+        /// <summary>
+        /// Get result of quiz
+        /// </summary>
+        /// <param name="quizSessionId">unique ID of quiz</param>
+        /// <returns>Instance of the quiz from cache</returns>
         [HttpGet("result/{quizSessionId}")]
         public ActionResult GetResult(string quizSessionId)
         {
@@ -67,12 +89,6 @@ namespace Teamway.PersonalityTest.WebApp.Controllers
                 SessionId = quizSessionId,
                 PersonalityType = _personalityTestLogic.GetPersonalityType(quizSessionId)
             });
-        }
-
-        [HttpGet]
-        public IEnumerable<Question> Get()
-        {
-            return _cache.Get<IList<Question>>("questions");
         }
     }
 }

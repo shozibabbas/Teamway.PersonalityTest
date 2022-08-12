@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using Teamway.PersonalityTest.WebApp.Core;
 using Teamway.PersonalityTest.WebApp.Errors;
 using Teamway.PersonalityTest.WebApp.Models;
@@ -32,6 +35,24 @@ namespace Teamway.PersonalityTest.WebApp
         {
             services.AddCors();
             services.AddControllers();
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Personality Test API",
+                    Description = "An ASP.NET Core Web API for managing personality quiz",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Sayyed Shozib Abbas",
+                        Email = "shozibabbas@gmail.com"
+                    }
+                });
+
+                // using System.Reflection;
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            });
             services.AddMemoryCache();
             services.AddOptions();
             services.Configure<PersonalityConfiguration>(Configuration.GetSection("Personality"));
@@ -60,6 +81,12 @@ namespace Teamway.PersonalityTest.WebApp
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                    options.RoutePrefix = string.Empty;
+                });
             }
 
             app.UseHttpsRedirection();
