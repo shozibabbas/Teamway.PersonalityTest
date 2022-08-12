@@ -58,22 +58,23 @@ function QASection() {
 		});
 	}, [quizDetail]);
 
+	// eslint-disable-next-line no-constant-condition
 	if (quizDetailIsLoading || previousQuestionIsLoading) {
 		return (
-			<div className="w-75 d-flex flex-column align-items-center">
+			<div className={'d-flex flex-column align-items-center'}>
 				<Spinner animation={'border'}/>
 			</div>
 		);
 	}
 	if (!question || error) {
 		return (
-			<div className="w-75 d-flex flex-column">
+			<>
 				<ErrorAlertBox {...error} />
-			</div>
+			</>
 		);
 	}
 	return (
-		<div className="w-75 d-flex flex-column">
+		<>
 			<div className="flex-grow-1 d-flex flex-column justify-content-evenly">
 				<ProgressBar now={stats.completedQuestions / stats.totalQuestions * 100}
 					label={`${stats.completedQuestions} / ${stats.totalQuestions}`} variant={'secondary'}/>
@@ -91,8 +92,8 @@ function QASection() {
 					))}
 				</ListGroup>
 				<div className="mt-4 d-flex flex-row justify-content-between align-items-end">
-					<CustomButton variant={'outline-primary'} disabled={stats.completedQuestions < 2}
-						isLoading={isLoading || previousQuestionIsLoading}
+					<CustomButton variant={'outline-primary'} disabled={stats.completedQuestions < 2 || isLoading}
+						isLoading={previousQuestionIsLoading}
 						onClick={onGoToPreviousQuestion}>
 						<FontAwesomeIcon icon={solid('arrow-left')} className={'me-2'}/>
                         Go to Previous Question
@@ -104,7 +105,7 @@ function QASection() {
 					</CustomButton>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }
 
