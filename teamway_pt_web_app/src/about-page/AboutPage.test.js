@@ -1,16 +1,20 @@
 import React from 'react';
 import {render} from '@testing-library/react';
-import App from './App';
 import {BrowserRouter as Router} from 'react-router-dom';
-import {store} from './redux/store';
 import {Provider} from 'react-redux';
+import {store} from '../redux/store';
+import AboutPage from './AboutPage';
 
-test('renders', () => {
+beforeEach(() => {
 	render(
 		<Provider store={store}>
 			<Router>
-				<App/>
+				<AboutPage/>
 			</Router>
 		</Provider>
 	);
+});
+
+test('renders', () => {
+	// renderComponent();
 });
