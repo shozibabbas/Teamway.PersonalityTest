@@ -5,7 +5,7 @@ QuizPage.propTypes = {};
 
 function QuizPage() {
 	return (
-		<div className="w-100 flex-fill d-flex flex-row justify-content-between">
+		<div className="w-100 flex-fill d-flex flex-row justify-content-center">
 			<Outlet/>
 		</div>
 	);
