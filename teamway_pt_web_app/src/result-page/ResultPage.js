@@ -7,6 +7,7 @@ import IntrovertResult from './IntrovertResult';
 import ExtrovertResult from './ExtrovertResult';
 import {Button, Spinner} from 'react-bootstrap';
 import ErrorAlertBox from '../common/ErrorAlertBox';
+import CopyToClipboardButton from './CopyToClipboardButton';
 
 ResultPage.propTypes = {};
 
@@ -49,10 +50,7 @@ function ResultPage() {
 				<div className="col d-flex flex-column justify-content-center align-items-center">
 					<p>Share your result!</p>
 					<div className={'d-flex flex-column'}>
-						<Button variant={'outline-dark'} className="rounded-0 border-0 mb-3"
-							type="button">
-							<FontAwesomeIcon icon={solid('clipboard')} className={'me-1'}/> Copy Results to Clipboard
-						</Button>
+						<CopyToClipboardButton/>
 						<Button variant={'outline-primary'} className="rounded-0 border-0"
 							type="button" onClick={() => navigate('/')}>
 							<FontAwesomeIcon icon={solid('play')} className={'me-1'}/> Test again
